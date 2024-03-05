@@ -22,33 +22,53 @@ namespace btcthings
 
         private void BtcGetRates_Click(object sender, EventArgs e)
         {
-            if(currencyCombo.SelectedItem.ToString() == "EUR")
+            if (currencyCombo.SelectedItem != null)
             {
+                string selectedCurrency = currencyCombo.SelectedItem.ToString();
                 resultsLabel.Visible = true;
                 resultTextBox.Visible = true;
                 BitcoinRates bitcoin = GetRates();
-                float result = Int32.Parse(amountOfCoinBox.Text) * bitcoin.bpi.EUR.rate_float;
-                resultTextBox.Text = $"{result.ToString()} {bitcoin.bpi.EUR.code}";
-            }
-            if (currencyCombo.SelectedItem.ToString() == "USD")
-            {
-                resultsLabel.Visible = true;
-                resultTextBox.Visible = true;
-                BitcoinRates bitcoin = GetRates();
-                float result = Int32.Parse(amountOfCoinBox.Text) * bitcoin.bpi.USD.rate_float;
-                resultTextBox.Text = $"{result.ToString()} {bitcoin.bpi.USD.code}";
-            }
-            if (currencyCombo.SelectedItem.ToString() == "GBP")
-            {
-                resultsLabel.Visible = true;
-                resultTextBox.Visible = true;
-                BitcoinRates bitcoin = GetRates();
-                float result = Int32.Parse(amountOfCoinBox.Text) * bitcoin.bpi.GBP.rate_float;
-                resultTextBox.Text = $"{result.ToString()} {bitcoin.bpi.GBP.code}";
-            }
 
-
+                if (bitcoin != null)
+                {
+                    float result = 0.0f;
+                    if (float.TryParse(amountOfCoinBox.Text, out float amount))
+                    {
+                        switch (selectedCurrency)
+                        {
+                            case "EUR":
+                                result = amount * bitcoin.bpi.EUR.rate_float;
+                                resultTextBox.Text = $"{result.ToString()} {bitcoin.bpi.EUR.code}";
+                                break;
+                            case "USD":
+                                result = amount * bitcoin.bpi.USD.rate_float;
+                                resultTextBox.Text = $"{result.ToString()} {bitcoin.bpi.USD.code}";
+                                break;
+                            case "GBP":
+                                result = amount * bitcoin.bpi.GBP.rate_float;
+                                resultTextBox.Text = $"{result.ToString()} {bitcoin.bpi.GBP.code}";
+                                break;
+                            default:
+                                MessageBox.Show("Invalid currency selection.");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Please enter a valid amount.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Failed to fetch Bitcoin rates. Please try again later.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a currency.");
+            }
         }
+
 
         private void amountOfCoinBox_TextChanged(object sender, EventArgs e)
         {
